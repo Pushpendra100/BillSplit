@@ -8,7 +8,12 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      
+      colors: {
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        highlighter: "var(--highlighter)",
+        muted: "var(--muted)"
+      }
     },
   },
   plugins: [],

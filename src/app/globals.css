@@ -2,3 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    :root {
+        --background: #161616;
+        --foreground: #fff;
+        --highlighter: #831be7;
+        --muted: #c1c1c1;
+    }
+}
+
+@layer base {
+    body {
+        @apply bg-background text-foreground
+    }
+}
