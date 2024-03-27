@@ -2,8 +2,9 @@ import Image from "next/image";
 import logo from "@/public/logo.png"
 import home_image from "@/public/home_image.png"
 import { ActionButton } from "@src/components";
+import Link from "next/link";
 
-export default function Home() {
+const HomePage = () => {
   return (
     <main className="h-[100vh] w-[100%] flex flex-row">
       <section className=" flex flex-1 flex-col justify-center items-end p-8 pr-[10rem]" >
@@ -18,7 +19,7 @@ export default function Home() {
           </div>
           <div className="mt-[3rem]" >
             <ActionButton className="font-bold uppercase text-xl"  >
-              start now
+              <Link href={"/signup"} >start now</Link> 
             </ActionButton>
           </div>
         </div>
@@ -31,3 +32,5 @@ export default function Home() {
     </main>
   );
 }
+
+export default HomePage
