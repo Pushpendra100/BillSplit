@@ -1,8 +1,13 @@
+import Navbar from "@/src/components/Navbar"
+
 const ActivityPage = () => {
     return (
-      <div>
-        
-      </div>
+      <main>
+        <Navbar/>
+        <section>
+          activity page
+        </section>
+      </main>
     )
   }
   

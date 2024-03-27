@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import Searchbar from './Searchbar'
+import { Searchbar } from '@src/components'
 
-const Navbar = () => {
+export const Navbar = () => {
   return (
     <nav className='w-[100vw] bg-highlighter p-8 py-4 text-xl flex justify-between items-center ' >
       <h2 className="text-2xl font-bold" > <Link href={"/"} className='focus:outline-none' >BillSpliter</Link> </h2>
@@ -13,4 +13,3 @@ const Navbar = () => {
   )
 }
 
-export default Navbar

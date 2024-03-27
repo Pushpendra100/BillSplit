@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-const Searchbar = () => {
+export const Searchbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
@@ -18,4 +18,3 @@ const Searchbar = () => {
   );
 };
 
-export default Searchbar;

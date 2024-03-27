@@ -1,6 +1,6 @@
 import { ComponentProps } from "react"
 
-const Sidebar = ({children}: ComponentProps<'aside'>) => {
+export const Sidebar = ({children}: ComponentProps<'aside'>) => {
   return (
     <aside className="h-screen" >
         <div className="h-full flex flex-col bg-white border-r shadow-sm" >
@@ -16,4 +16,3 @@ const Sidebar = ({children}: ComponentProps<'aside'>) => {
   )
 }
 
-export default Sidebar
