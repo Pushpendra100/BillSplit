@@ -55,7 +55,7 @@ export const CreateActivityModal = ({
       </div>
       <div className="flex w-full justify-center mt-5">
       <ActionButton
-        className="font-bold uppercase text-l mx-auto"
+        className="font-bold uppercase text-lg mx-auto"
         onClick={() => closeModal()}
       >
         Paid by you and split equally

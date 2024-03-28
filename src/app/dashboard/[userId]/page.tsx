@@ -3,7 +3,7 @@
 import { ActionButton, CreateActivityModal } from "@/src/components";
 import { Navbar } from "@/src/components";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { FaRegStar } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
 
