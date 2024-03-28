@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@src/lib/db";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,11 +45,30 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({
+    const tokenData = {
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+    };
+
+    const token = await jwt.sign(tokenData, process.env.JWT_SECRET!, {
+      expiresIn: process.env.JWT_EXPIRE,
+    });
+
+    const response = NextResponse.json({
       message: "User created successfully",
       status: 201,
       user: newUser,
     });
+
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      expires: new Date(
+        Date.now() + Number(process.env.COOKIE_EXPIRE!) * 24 * 60 * 60 * 1000
+      ),
+    });
+
+    return response;
   } catch (error: any) {
     return NextResponse.json({ error: error.message, status: 500 });
   }
