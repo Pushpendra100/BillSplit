@@ -19,7 +19,7 @@ const HomePage = () => {
           </div>
           <div className="mt-[3rem]" >
             <ActionButton className="font-bold uppercase text-xl"  >
-              <Link href={"/signup"} >start now</Link> 
+              <Link href="/signup" >start now</Link> 
             </ActionButton>
           </div>
         </div>
