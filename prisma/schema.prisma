@@ -18,7 +18,35 @@ model User {
   name String 
   email String @unique
   password String? 
-  pic String
+  totalMoney Float @default(0)
+
+  allActivities ActivityInfo[]
+  Activity Activity[]
 
   createdAt DateTime @default(now())
+}
+
+model Activity {
+  id String @id @default(uuid())  
+  title String
+  descrtiption String
+  createdBy String
+  members String[]
+
+  user User @relation(fields: [userId], references: [id])
+  userId String 
+
+  createdAt DateTime @default(now())
+
+}
+
+model ActivityInfo {
+  activityId String @id
+  title String
+  money Float
+  membersCount Int
+  createdAt DateTime
+
+  user User @relation(fields: [userId], references: [id])
+  userId String
 }
