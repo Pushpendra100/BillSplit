@@ -54,7 +54,7 @@ const SignUpPage = () => {
             }
             console.log("Signup success", response.data)
 
-            router.push(`dashboard/${123}`);
+            router.push(`dashboard/${response.data.user.id}`);
             toast.success("success")
 
         } catch (error: any) {

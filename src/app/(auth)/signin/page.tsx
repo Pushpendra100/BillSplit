@@ -39,7 +39,7 @@ const SignInPage = () => {
             console.log("Signin success", response.data)
 
 
-            router.push(`dashboard/${123}`);
+            router.push(`dashboard/${response.data.user.id}`);
             toast.success("success")
 
         } catch (error: any) {
