@@ -72,7 +72,7 @@ const SignInPage = () => {
                     />
                     <input
                         type="password"
-                        placeholder="Password min. 8 characters"
+                        placeholder="Password"
                         className="bg-transparent broder-solid border-2 border-gray-700 px-6 py-4"
                         value={user.password}
                         onChange={(e) => setUser({...user, password: e.target.value})}
