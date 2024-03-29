@@ -2,14 +2,24 @@
 
 import { ActionButton, CreateActivityModal } from "@/src/components";
 import { Navbar } from "@/src/components";
+import axios from "axios";
 import Link from "next/link";
-import { useState } from "react";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { FaRegStar } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
 
-const DashboardPage = () => {
-
+const DashboardPage = ({params}:{params: {userId: string}} ) => {
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
+
+  const getUserData = async () =>{
+    const response = await axios.get(`/api/users/me/${params.userId}`);
+    console.log(response.data.user);
+  }
+  useEffect(()=>{
+    getUserData();
+  },[])
 
   return (
     <main className="flex flex-col">
