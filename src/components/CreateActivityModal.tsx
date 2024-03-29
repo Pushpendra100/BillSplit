@@ -11,6 +11,7 @@ type LinkCardDataType = {
   amount: number
   membersCount: number
   dateTime: Date 
+  activityId: string;
 }
 
 type CreateActivityModalType = ComponentProps<"dialog"> & {
@@ -72,7 +73,8 @@ export const CreateActivityModal = ({
             title: activityInfo.title,
             amount: activityInfo.money,
             membersCount: activityInfo.membersCount,
-            dateTime: activityInfo.createdAt
+            dateTime: activityInfo.createdAt,
+            activityId: activityInfo.activityId
           }])
         });
       }

@@ -4,7 +4,7 @@ import { ActionButton, CreateActivityModal } from "@/src/components";
 import { Navbar } from "@/src/components";
 import axios from "axios";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaRegStar } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
@@ -14,6 +14,7 @@ type LinkCardDataType = {
   amount: number;
   membersCount: number;
   dateTime: Date;
+  activityId: string;
 };
 
 type UserDetailsType = {
@@ -22,6 +23,8 @@ type UserDetailsType = {
 };
 
 const DashboardPage = ({ params }: { params: { userId: string } }) => {
+
+  const router = useRouter();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
@@ -48,6 +51,7 @@ const DashboardPage = ({ params }: { params: { userId: string } }) => {
               amount: activityInfo.money,
               membersCount: activityInfo.membersCount,
               dateTime: activityInfo.createdAt,
+              activityId: activityInfo.activityId
             },
           ]);
         });
@@ -117,7 +121,7 @@ const DashboardPage = ({ params }: { params: { userId: string } }) => {
             {linkCardData &&
               linkCardData.map((cardData, i) => (
                 <Link
-                  href={"#"}
+                  href={`/activity/${cardData.activityId}`}
                   key={i}
                   className="w-[70%] px-6 py-5 bg-gray-600 hover:bg-gray-700 flex justify-between items-center "
                 >
