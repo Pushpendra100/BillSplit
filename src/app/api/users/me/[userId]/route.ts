@@ -18,7 +18,7 @@ export async function GET(
         id: userId,
       },
       include: {
-        Activity: {
+        allActivities: {
             orderBy: {
                 createdAt: 'desc'
             }

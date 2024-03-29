@@ -21,7 +21,7 @@ model User {
   totalMoney Float @default(0)
 
   allActivities ActivityInfo[]
-  Activity Activity[]
+  activities Activity[]
 
   createdAt DateTime @default(now())
 }
@@ -29,8 +29,7 @@ model User {
 model Activity {
   id String @id @default(uuid())  
   title String
-  descrtiption String
-  createdBy String
+  description String
   members String[]
 
   user User @relation(fields: [userId], references: [id])
@@ -41,7 +40,8 @@ model Activity {
 }
 
 model ActivityInfo {
-  activityId String @id
+  id String @id @default(uuid())
+  activityId String 
   title String
   money Float
   membersCount Int
