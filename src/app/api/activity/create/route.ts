@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     })
 
     members.forEach(async(email: string) => {
-      const user = await db.user.findUnique({
+      const otherUser = await db.user.findUnique({
         where: {
           email
         }
@@ -52,7 +52,15 @@ export async function POST(request: NextRequest) {
           createdAt: activity.createdAt,
           money: -amount/(members.length+1),
           membersCount: members.length + 1,
-          userId: user!.id,
+          userId: otherUser!.id,
+        }
+      })
+      await db.user.update({
+        where: {
+          id: otherUser?.id
+        },
+        data: {
+          totalMoney: (otherUser?.totalMoney! - (amount/(members.length+1)))
         }
       })
     });

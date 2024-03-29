@@ -7,9 +7,9 @@ import axios from "axios";
 import { useParams } from "next/navigation";
 
 type LinkCardDataType = {
-  title: String
-  amount: Number
-  membersCount: Number
+  title: string
+  amount: number
+  membersCount: number
   dateTime: Date 
 }
 
@@ -106,7 +106,7 @@ export const CreateActivityModal = ({
       </h2>
       <div className="bg-pink-500 mt-6 relative">
         <input
-          className="px-5 py-1  w-[100%] sm0:py-3  placeholder:text-zinc-500 text-black bg-zinc-200 focus:bg-zinc-300  focus:outline-none "
+          className="px-5 py-4  w-[100%] sm0:py-3  placeholder:text-zinc-500 text-black bg-zinc-200 focus:bg-zinc-300  focus:outline-none "
           type="search"
           placeholder="Add user"
         />
