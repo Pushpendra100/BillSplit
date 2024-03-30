@@ -27,7 +27,7 @@ export const Navbar = () => {
           BillSpliter
         </Link>{" "}
       </h2>
-      <Searchbar />
+      {/* <Searchbar /> */}
       <div className="relative group cursor-default ">
         <span>Pushpendra Pal</span>
         <div
