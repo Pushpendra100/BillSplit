@@ -3,7 +3,8 @@ import { ActionButton } from "@/src/components";
 import { Navbar } from "@/src/components/Navbar";
 import axios from "axios";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { MouseEvent, useEffect, useState } from "react";
 
 type ActivityDetailsType = {
   title: string;
@@ -23,10 +24,13 @@ type ActivityInfoType = {
 };
 
 const ActivityPage = ({ params }: { params: { activityId: string } }) => {
+
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [activityDetails, setActivityDetails] = useState<ActivityDetailsType>();
   const [userDetails, setUserDetails] = useState<UserDetailsType>();
   const [activityInfo, setActivityInfo] = useState<ActivityInfoType | null>();
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const getActivityData = async () => {
     try {
@@ -59,9 +63,34 @@ const ActivityPage = ({ params }: { params: { activityId: string } }) => {
     getActivityData();
   }, []);
 
-  const handleDelete = async () => {};
+  const handleDelete = async (e: MouseEvent<HTMLButtonElement>) => {
+    try{
+      setButtonLoading(true);
+      const response = await axios.delete(`/api/activity/delete/${params.activityId}`)
+      if(response){
+        router.push(`/dashboard/${response.data.id}`);
+      }
+    }catch(error: any){
+      console.log("Failed to delete", error.message)
+    }finally{
+      setButtonLoading(false)
+    }
+  };
 
-  const handleSettle = async () => {};
+  const handleSettle = async () => {
+    try{
+      setButtonLoading(true)
+      const response = await axios.patch(`/api/activityinfo/update/${params.activityId}`, {money: activityInfo!.money} )
+      if(response){
+        setActivityInfo({money: 0})
+        console.log("done")
+      }
+    }catch(error: any){
+      console.log("Failed to delete", error.message)
+    }finally{
+      setButtonLoading(false)
+    }
+  };
 
   return (
     <main className="flex flex-col h-[100vh]">
@@ -116,10 +145,11 @@ const ActivityPage = ({ params }: { params: { activityId: string } }) => {
                       Do you want to delete this activity?
                     </p>
                     <ActionButton
-                      onClick={handleDelete}
+                      onClick={(e)=>handleDelete(e)}
                       className="bg-red-500 hover:bg-red-600 font-bold uppercase"
+                      disabled={buttonLoading}
                     >
-                      Delete
+                      {buttonLoading?("..."):("Delete")}
                     </ActionButton>
                   </>
                 ) : (
@@ -134,7 +164,7 @@ const ActivityPage = ({ params }: { params: { activityId: string } }) => {
                           onClick={handleSettle}
                           className="font-bold uppercase"
                         >
-                          Settle
+                          {buttonLoading?("..."):("Settle")}
                         </ActionButton>
                       </>
                     ) : (
