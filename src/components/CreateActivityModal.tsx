@@ -1,38 +1,66 @@
 "use client";
-import React, { ComponentProps, useState } from "react";
+import React, { ComponentProps, useEffect, useState } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { ActionButton } from ".";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useParams } from "next/navigation";
+import { RxCross1 } from "react-icons/rx";
 
 type LinkCardDataType = {
-  title: string
-  amount: number
-  membersCount: number
-  dateTime: Date 
+  title: string;
+  amount: number;
+  membersCount: number;
+  dateTime: Date;
   activityId: string;
-}
+};
+
+type ActivityType = {
+  title: string;
+  description: string;
+  amount: string;
+  members: string[];
+};
 
 type CreateActivityModalType = ComponentProps<"dialog"> & {
   closeModal: () => void;
-  setLinkCardData: (value: LinkCardDataType[] | ((prevVar: LinkCardDataType[]) => LinkCardDataType[])) => void;
+  setLinkCardData: (
+    value:
+      | LinkCardDataType[]
+      | ((prevVar: LinkCardDataType[]) => LinkCardDataType[])
+  ) => void;
+  modalStatus: boolean;
+  email: string;
 };
 
 export const CreateActivityModal = ({
   closeModal,
   setLinkCardData,
+  modalStatus,
+  email,
   ...props
 }: CreateActivityModalType) => {
   const params = useParams();
-  const [activity, setActivity] = useState({
+  const [activity, setActivity] = useState<ActivityType>({
     title: "",
     description: "",
     amount: "",
-    members: ['Pushpendra@g.com'],
+    members: [],
   });
 
   const [loading, setLoading] = useState(false);
+  const [searchEmail, setSearchEmail] = useState("");
+  const [searchResult, setSearchResult] = useState<string[]>([]);
+
+  useEffect(() => {
+    setSearchEmail('');
+    setActivity({
+      title: "",
+      description: "",
+      amount: "",
+      members: [],
+    });
+  }, [modalStatus]);
 
   const handleCreateActivity = async () => {
     try {
@@ -67,35 +95,87 @@ export const CreateActivityModal = ({
       console.log("Activity success", response.data);
 
       //response.data.allActivities
-      if(response){
-        response.data.user.allActivities.forEach((activityInfo: any)  => {
-          setLinkCardData((prev)=> [...prev, {
-            title: activityInfo.title,
-            amount: activityInfo.money,
-            membersCount: activityInfo.membersCount,
-            dateTime: activityInfo.createdAt,
-            activityId: activityInfo.activityId
-          }])
+      if (response) {
+        response.data.user.allActivities.forEach((activityInfo: any) => {
+          setLinkCardData((prev) => [
+            ...prev,
+            {
+              title: activityInfo.title,
+              amount: activityInfo.money,
+              membersCount: activityInfo.membersCount,
+              dateTime: activityInfo.createdAt,
+              activityId: activityInfo.activityId,
+            },
+          ]);
         });
       }
 
       toast.success("Activity created");
-
     } catch (error: any) {
       console.log("Signup failed", error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);
       closeModal();
-      setActivity(
-        {
-          title: "",
-          description: "",
-          amount: "",
-          members: ['Pushpendra@g.com'],
-        }
-      )
+      setActivity({
+        title: "",
+        description: "",
+        amount: "",
+        members: [],
+      });
     }
+  };
+
+  const handleSearch = async () => {
+    try {
+      if (!searchEmail) {
+        toast.error("Please enter email");
+        return;
+      }
+      const response = await axios.post("/api/search/user", {
+        email: searchEmail,
+      });
+
+      if (response) {
+        if(response.data.users?.includes(email)){
+          const list = response.data.users;
+          const i = list.indexOf(email)
+          list.splice(i, 1);
+          setSearchResult(list);
+        }else{
+          setSearchResult(response.data.users);
+        }
+      }
+      if(searchResult.length==0){
+        toast.error("No user found")
+      }
+      console.log(response);
+
+    } catch (error: any) {
+      console.log("Signup failed", error.message);
+      toast.error(error.message);
+    }
+  };
+
+  const handleAddUserEmail = (i: number) => {
+    console.log(i);
+    if (activity.members?.includes(searchResult[i])) {
+      toast.error("User is already included");
+    } else {
+      activity.members.push(searchResult[i]);
+    }
+    setSearchResult([]);
+  };
+
+  const handleRemoveUserEmail = (i: number) => {
+    setActivity((prev) => {
+      prev.members.splice(i, 1);
+      return prev;
+    });
+  };
+
+  const handleSearchClose = () => {
+    setSearchResult([]);
   };
 
   return (
@@ -111,36 +191,68 @@ export const CreateActivityModal = ({
           className="px-5 py-4  w-[100%] sm0:py-3  placeholder:text-zinc-500 text-black bg-zinc-200 focus:bg-zinc-300  focus:outline-none "
           type="search"
           placeholder="Add user"
+          value={searchEmail}
+          onChange={(e) => setSearchEmail(e.target.value)}
         />
-        <button className="text-white absolute end-0 bottom-0 top-0 bg-blue-700 hover:bg-blue-800  focus:outline-none  font-medium  px-5 py-1">
-          Search
-        </button>
+        {searchResult.length == 0 ? (
+          <button
+            onClick={handleSearch}
+            className="text-white absolute end-0 bottom-0 top-0 bg-blue-700 hover:bg-blue-800  focus:outline-none  font-medium w-[15%] px-5 py-1"
+          >
+            Search
+          </button>
+        ) : (
+          <button
+            onClick={handleSearchClose}
+            className="text-white absolute end-0 bottom-0 top-0 bg-blue-700 hover:bg-blue-800  focus:outline-none  font-medium w-[15%]  px-5 py-1 flex items-center justify-center "
+          >
+            <RxCross1 size={25} />
+          </button>
+        )}
+        {searchResult &&
+          searchResult.map((result, i) => (
+            <div
+              key={i}
+              onClick={() => handleAddUserEmail(i)}
+              className="w-[100%] absolute bg-gray-200 p-2 mt-2 rounded md flex flex-col gap-1 "
+            >
+              <div className="px-6 py-4 text-center bg-gray-300 hover:bg-gray-400 cursor-pointer">
+                {result}
+              </div>
+            </div>
+          ))}
       </div>
-      <div className="w-[100%] mt-5 mb-5 px-5 py-2 border border-gray-200 rounded-md shadow-inner flex flex-wrap gap-4">
-        <div className=" flex w-fit rounded-sm bg-zinc-200">
-          <p className="max-w-[14rem] truncate p-2">
-            pushpendrapushpendrapushpendrapushpendra
-          </p>
-          <span className="bg-zinc-300 hover:bg-zinc-400 p-2 cursor-pointer flex items-center ">
-            <RxCross2 size={20} />
-          </span>
+      {activity.members.length != 0 && (
+        <div className="w-[100%] mt-5 mb-5 px-5 py-2 border border-gray-200 rounded-md shadow-inner flex flex-wrap gap-4">
+          {activity.members.map((member, i) => (
+            <div key={i} className=" flex w-fit rounded-sm bg-zinc-200">
+              <p className="max-w-[14rem] truncate p-2">{member}</p>
+              <span
+                onClick={() => handleRemoveUserEmail(i)}
+                className="bg-zinc-300 hover:bg-zinc-400 p-2 cursor-pointer flex items-center "
+              >
+                <RxCross2 size={20} />
+              </span>
+            </div>
+          ))}
         </div>
-      </div>
+      )}
       <div className="w-[100%] py-[1rem] flex flex-col gap-5 ">
         <input
           type="text"
           placeholder="Title"
           className="h-full w-full border-b border-gray-300 bg-transparent pt-4 pb-1.5 placeholder:text-gray-500 font-sans text-lg font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
           value={activity.title}
-          onChange={(e) => setActivity({...activity, title: e.target.value})}
+          onChange={(e) => setActivity({ ...activity, title: e.target.value })}
         />
         <input
           type="text"
           placeholder="Description"
           className="h-full w-full border-b border-gray-300 bg-transparent pt-4 pb-1.5 placeholder:text-gray-500 font-sans text-lg font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
           value={activity.description}
-          onChange={(e) => setActivity({...activity, description: e.target.value})}
-
+          onChange={(e) =>
+            setActivity({ ...activity, description: e.target.value })
+          }
         />
         <input
           type="text"
@@ -150,8 +262,8 @@ export const CreateActivityModal = ({
           value={activity.amount}
           onChange={(e) => {
             const re = /^[0-9\b]+$/;
-            if(e.target.value === '' || re.test(e.target.value)){
-              setActivity({...activity, amount: e.target.value})
+            if (e.target.value === "" || re.test(e.target.value)) {
+              setActivity({ ...activity, amount: e.target.value });
             }
           }}
         />

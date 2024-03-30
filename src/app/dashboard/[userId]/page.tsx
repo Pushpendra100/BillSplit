@@ -19,6 +19,7 @@ type LinkCardDataType = {
 
 type UserDetailsType = {
   name: string;
+  email: string;
   totalMoney: number;
 };
 
@@ -31,6 +32,7 @@ const DashboardPage = ({ params }: { params: { userId: string } }) => {
   const [linkCardData, setLinkCardData] = useState<LinkCardDataType[]>([]);
   const [userDetails, setUserDetails] = useState<UserDetailsType>({
     name: "",
+    email: "",
     totalMoney: 0,
   });
 
@@ -40,6 +42,7 @@ const DashboardPage = ({ params }: { params: { userId: string } }) => {
       if (response) {
         setUserDetails({
           name: response.data.user.name,
+          email: response.data.user.email,
           totalMoney: -50,
         });
 
@@ -163,6 +166,8 @@ const DashboardPage = ({ params }: { params: { userId: string } }) => {
         open={showModal}
         closeModal={() => setShowModal(false)}
         setLinkCardData={setLinkCardData}
+        modalStatus={showModal}
+        email={userDetails.email}
       />
     </main>
   );
