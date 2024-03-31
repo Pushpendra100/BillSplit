@@ -53,7 +53,7 @@ export const CreateActivityModal = ({
   const [searchResult, setSearchResult] = useState<string[]>([]);
 
   useEffect(() => {
-    setSearchEmail('');
+    setSearchEmail("");
     setActivity({
       title: "",
       description: "",
@@ -61,6 +61,10 @@ export const CreateActivityModal = ({
       members: [],
     });
   }, [modalStatus]);
+
+  useEffect(() => {
+    setSearchResult([]);
+  }, [searchEmail]);
 
   const handleCreateActivity = async () => {
     try {
@@ -82,6 +86,7 @@ export const CreateActivityModal = ({
         toast.error("Please select atleast one member");
         return;
       }
+      console.log(activity);
       const response = await axios.post("/api/activity/create", {
         ...activity,
         amount: parseInt(activity.amount),
@@ -96,18 +101,16 @@ export const CreateActivityModal = ({
 
       //response.data.allActivities
       if (response) {
-        response.data.user.allActivities.forEach((activityInfo: any) => {
-          setLinkCardData((prev) => [
-            ...prev,
-            {
-              title: activityInfo.title,
-              amount: activityInfo.money,
-              membersCount: activityInfo.membersCount,
-              dateTime: activityInfo.createdAt,
-              activityId: activityInfo.activityId,
-            },
-          ]);
-        });
+        const userAllActivities = response.data.user.allActivities.map(
+          (activityInfo: any) => ({
+            title: activityInfo.title,
+            amount: activityInfo.money,
+            membersCount: activityInfo.membersCount,
+            dateTime: activityInfo.createdAt,
+            activityId: activityInfo.activityId,
+          })
+        );
+        setLinkCardData(userAllActivities);
       }
 
       toast.success("Activity created");
@@ -137,20 +140,24 @@ export const CreateActivityModal = ({
       });
 
       if (response) {
-        if(response.data.users?.includes(email)){
+        if (response.data.users?.includes(email)) {
           const list = response.data.users;
-          const i = list.indexOf(email)
+          const i = list.indexOf(email);
           list.splice(i, 1);
           setSearchResult(list);
-        }else{
+          if (list.length == 0) {
+            toast.error("No user found");
+            setSearchEmail("");
+          }
+        } else {
           setSearchResult(response.data.users);
+          if (response.data.users.length == 0) {
+            toast.error("No user found");
+            setSearchEmail("");
+          }
         }
       }
-      if(searchResult.length==0){
-        toast.error("No user found")
-      }
       console.log(response);
-
     } catch (error: any) {
       console.log("Signup failed", error.message);
       toast.error(error.message);
@@ -158,7 +165,6 @@ export const CreateActivityModal = ({
   };
 
   const handleAddUserEmail = (i: number) => {
-    console.log(i);
     if (activity.members?.includes(searchResult[i])) {
       toast.error("User is already included");
     } else {
@@ -169,12 +175,13 @@ export const CreateActivityModal = ({
 
   const handleRemoveUserEmail = (i: number) => {
     setActivity((prev) => {
-      prev.members.splice(i, 1);
-      return prev;
+      const updatedMembers = prev.members.filter((_, index) => index != i);
+      return { ...prev, members: updatedMembers };
     });
   };
 
   const handleSearchClose = () => {
+    setSearchEmail("");
     setSearchResult([]);
   };
 
@@ -272,6 +279,7 @@ export const CreateActivityModal = ({
         <ActionButton
           className="font-bold uppercase text-lg mx-auto"
           onClick={handleCreateActivity}
+          disabled={loading}
         >
           Paid by you and split equally
         </ActionButton>

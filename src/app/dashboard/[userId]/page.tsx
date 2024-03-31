@@ -24,7 +24,6 @@ type UserDetailsType = {
 };
 
 const DashboardPage = ({ params }: { params: { userId: string } }) => {
-
   const router = useRouter();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
@@ -43,7 +42,7 @@ const DashboardPage = ({ params }: { params: { userId: string } }) => {
         setUserDetails({
           name: response.data.user.name,
           email: response.data.user.email,
-          totalMoney: -50,
+          totalMoney: response.data.user.totalMoney,
         });
 
         response.data.user.allActivities?.forEach((activityInfo: any) => {
@@ -54,7 +53,7 @@ const DashboardPage = ({ params }: { params: { userId: string } }) => {
               amount: activityInfo.money,
               membersCount: activityInfo.membersCount,
               dateTime: activityInfo.createdAt,
-              activityId: activityInfo.activityId
+              activityId: activityInfo.activityId,
             },
           ]);
         });

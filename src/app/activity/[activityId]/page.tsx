@@ -16,7 +16,12 @@ type ActivityDetailsType = {
 type UserDetailsType = {
   name: string;
   email: string;
-  creator: boolean;
+  id: string;
+};
+
+type CreatorDetailsType = {
+  name: string;
+  email: string;
 };
 
 type ActivityInfoType = {
@@ -24,13 +29,14 @@ type ActivityInfoType = {
 };
 
 const ActivityPage = ({ params }: { params: { activityId: string } }) => {
-
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [activityDetails, setActivityDetails] = useState<ActivityDetailsType>();
   const [userDetails, setUserDetails] = useState<UserDetailsType>();
+  const [creatorDetails, setCreatorDetails] = useState<CreatorDetailsType>();
   const [activityInfo, setActivityInfo] = useState<ActivityInfoType | null>();
   const [buttonLoading, setButtonLoading] = useState(false);
+  const [isCreator, setIsCreator] = useState(false);
 
   const getActivityData = async () => {
     try {
@@ -42,15 +48,23 @@ const ActivityPage = ({ params }: { params: { activityId: string } }) => {
           members: response.data.activity.members,
           createdAt: response.data.activity.createdAt,
         });
+        setCreatorDetails({
+          name: response.data.creator.name,
+          email: response.data.creator.email,
+        });
         setUserDetails({
           name: response.data.userData.name,
-          creator: response.data.userData.creator,
           email: response.data.userData.email,
+          id: response.data.userData.id,
         });
         setActivityInfo({
           money: response.data.activityInfo.money,
         });
+        setIsCreator(
+          response.data.userData.id === response.data.activity.userId
+        );
       }
+      console.log(userDetails);
       console.log("done");
     } catch (error: any) {
       console.log("Failed to get data", error.message);
@@ -64,33 +78,42 @@ const ActivityPage = ({ params }: { params: { activityId: string } }) => {
   }, []);
 
   const handleDelete = async (e: MouseEvent<HTMLButtonElement>) => {
-    try{
+    try {
       setButtonLoading(true);
-      const response = await axios.delete(`/api/activity/delete/${params.activityId}`)
-      if(response){
+      const response = await axios.delete(
+        `/api/activity/delete/${params.activityId}`
+      );
+      if (response) {
         router.push(`/dashboard/${response.data.id}`);
       }
-    }catch(error: any){
-      console.log("Failed to delete", error.message)
-    }finally{
-      setButtonLoading(false)
+    } catch (error: any) {
+      console.log("Failed to delete", error.message);
+    } finally {
+      setButtonLoading(false);
     }
   };
 
   const handleSettle = async () => {
-    try{
-      setButtonLoading(true)
-      const response = await axios.patch(`/api/activityinfo/update/${params.activityId}`, {money: activityInfo!.money} )
-      if(response){
-        setActivityInfo({money: 0})
-        console.log("done")
+    try {
+      setButtonLoading(true);
+      const response = await axios.patch(
+        `/api/activityinfo/update/${params.activityId}`,
+        { money: activityInfo!.money }
+      );
+      if (response) {
+        setActivityInfo({ money: 0 });
+        console.log("done");
       }
-    }catch(error: any){
-      console.log("Failed to delete", error.message)
-    }finally{
-      setButtonLoading(false)
+    } catch (error: any) {
+      console.log("Failed to delete", error.message);
+    } finally {
+      setButtonLoading(false);
     }
   };
+
+  useEffect(() => {
+    console.log(userDetails);
+  }, [userDetails]);
 
   return (
     <main className="flex flex-col h-[100vh]">
@@ -108,10 +131,11 @@ const ActivityPage = ({ params }: { params: { activityId: string } }) => {
                 href={""}
                 className="bg-gray-600 hover:bg-gray-700 py-2 px-4 w-[15vw] max-w-[15vw] text-center rounded-sm truncate"
               >
-                {userDetails!.email}
+                {creatorDetails?.email}
               </Link>
-              {activityDetails?.members.map((member) => (
+              {activityDetails?.members.map((member, i) => (
                 <Link
+                  key={i}
                   href={""}
                   className="bg-gray-600 hover:bg-gray-700 py-2 px-4 w-[15vw] max-w-[15vw] text-center rounded-sm truncate"
                 >
@@ -134,22 +158,24 @@ const ActivityPage = ({ params }: { params: { activityId: string } }) => {
                   {String(activityDetails!.createdAt).substring(0, 10)}{" "}
                   {String(activityDetails!.createdAt).substring(11, 19)}
                 </span>
-                <span className="text-right">Creater: {userDetails!.name}</span>
+                <span className="text-right">
+                  Creater: {creatorDetails!.name}
+                </span>
               </div>
             </div>
             <div className=" my-10 h-full flex justify-center items-center text-lg">
               <div className="w-[70%] h-[80%] border-2 border-gray-600 flex flex-col gap-7 justify-center items-center ">
-                {userDetails!.creator ? (
+                {isCreator ? (
                   <>
                     <p className="w-[60%] text-center">
                       Do you want to delete this activity?
                     </p>
                     <ActionButton
-                      onClick={(e)=>handleDelete(e)}
+                      onClick={(e) => handleDelete(e)}
                       className="bg-red-500 hover:bg-red-600 font-bold uppercase"
                       disabled={buttonLoading}
                     >
-                      {buttonLoading?("..."):("Delete")}
+                      {buttonLoading ? "..." : "Delete"}
                     </ActionButton>
                   </>
                 ) : (
@@ -157,14 +183,14 @@ const ActivityPage = ({ params }: { params: { activityId: string } }) => {
                     {activityInfo!.money ? (
                       <>
                         <p className="w-[60%] text-center">
-                          You have to pay Rs {activityInfo!.money} to{" "}
-                          {userDetails!.name}
+                          You have to pay Rs {-1 * activityInfo!.money} to{" "}
+                          {creatorDetails!.name}
                         </p>
                         <ActionButton
                           onClick={handleSettle}
                           className="font-bold uppercase"
                         >
-                          {buttonLoading?("..."):("Settle")}
+                          {buttonLoading ? "..." : "Settle"}
                         </ActionButton>
                       </>
                     ) : (

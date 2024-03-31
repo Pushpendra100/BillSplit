@@ -25,12 +25,22 @@ export async function GET(request: NextRequest, context: { params: Params }) {
       }
     })
 
+    const creator = await db.user.findUnique({
+      where: {
+        id: activity?.userId
+      }
+    })
+
+    console.log(activity)
+    console.log("userdetails", userDetails)
+
     return NextResponse.json({
       message: "Activity found",
       activity,
       activityInfo,
+      creator,
       userData: {
-        creator: (userDetails.id === activity?.userId),
+        id: userDetails.id,
         name: userDetails.name,
         email: userDetails.email,
       }
