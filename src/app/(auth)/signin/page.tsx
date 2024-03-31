@@ -21,10 +21,11 @@ const SignInPage = () => {
     const accessToken = tokenResponse.access_token;
     const { result, message } = await signInGoogle(accessToken);
     if (result) {
-      router.push("/user/projects");
+      router.push(`/dashboard/${result.id}`);
     } else {
       toast.error(message);
     }
+    setLoading(false)
   }
 
   const login_google = useGoogleLogin({ onSuccess: handleGoogleLoginSuccess });
@@ -75,7 +76,13 @@ const SignInPage = () => {
           <h2 className="text-6xl mb-[3.5rem] font-bold">
             {loading ? "Loading..." : "Sign in"}
           </h2>
-          <ActionButton onClick={() => login_google()} className="font-bold bg-white text-black text-xl w-[25vw]">
+          <ActionButton
+            onClick={() => {
+              setLoading(true);
+              login_google();
+            }}
+            className="font-bold bg-white text-black text-xl w-[25vw]"
+          >
             Google
           </ActionButton>
           <div className="border-t-2 border-muted flex flex-col gap-4 text-xl mt-[2rem] pt-[2rem] w-[25vw] ">

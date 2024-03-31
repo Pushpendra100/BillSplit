@@ -7,6 +7,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useGoogleLogin, TokenResponse } from "@react-oauth/google";
 import { signUpGoogle } from "@/src/lib/googleAuth";
+import { set } from "zod";
 // import { FaGoogle } from "react-icons/fa";
 
 const SignUpPage = () => {
@@ -23,11 +24,12 @@ const SignUpPage = () => {
     const accessToken = tokenResponse.access_token;
     const { result, message } = await signUpGoogle(accessToken);
     if (result) {
-      console.log(true);
-      router.push("/user/projects");
+      console.log(result);
+      router.push(`/dashboard/${result.id}`);
     } else {
       toast.error(message);
     }
+    setLoading(false);
   }
 
   const register_google = useGoogleLogin({
@@ -72,8 +74,8 @@ const SignUpPage = () => {
       }
       console.log("Signup success", response.data);
 
-      router.push(`dashboard/${response.data.user.id}`);
       toast.success("success");
+      router.push(`dashboard/${response.data.user.id}`);
     } catch (error: any) {
       console.log("Signup failed", error.message);
       toast.error(error.message);
@@ -98,7 +100,10 @@ const SignUpPage = () => {
           </h2>
           <ActionButton
             className="font-bold bg-white text-black text-xl w-[25vw]"
-            onClick={() => register_google()}
+            onClick={() => {
+              setLoading(true);
+              register_google();
+            }}
           >
             Google
           </ActionButton>
