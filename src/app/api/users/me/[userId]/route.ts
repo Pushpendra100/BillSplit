@@ -1,6 +1,5 @@
 import { getDataFromToken } from "@/src/helpers/getDataFromToken";
 import { db } from "@/src/lib/db";
-import { NextApiRequest } from "next";
 import { NextRequest, NextResponse } from "next/server";
 
 type Params = {
@@ -8,7 +7,7 @@ type Params = {
 };
 
 export async function GET(
-  request: NextApiRequest,
+  request: NextRequest,
   context: { params: Params }
 ) {
   try {
