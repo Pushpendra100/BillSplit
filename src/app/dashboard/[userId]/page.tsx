@@ -81,7 +81,7 @@ const DashboardPage = ({ params }: { params: { userId: string } }) => {
       ) : (
         <section className="p-8 h-[100%] flex flex-col">
           <div className="flex items-center justify-between my-4 ">
-            <h1 className="text-5xl ">{userDetails.name}'s dashboard</h1>
+            <h1 className="text-5xl ">{userDetails.name}&apos;s dashboard</h1>
             {/* <div className="cursor-pointer">
                 <FaRegStar size={35} className="text-muted hover:text-white" />
                 <FaStar size={35} />

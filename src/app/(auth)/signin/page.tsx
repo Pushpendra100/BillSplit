@@ -66,7 +66,7 @@ const SignInPage = () => {
   return (
     <main className="h-[100%]">
       <div className="text-right text-muted  ">
-        Don't have an account?{" "}
+        Don&apos;t have an account?{" "}
         <Link href="/signup" className="hover:text-blue-500">
           Sign up
         </Link>
