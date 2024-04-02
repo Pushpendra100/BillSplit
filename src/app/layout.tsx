@@ -18,6 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+      <meta name="google-site-verification" content="LiMByCmWU5Z_bvLHICkUfK9YNm-uie-N_g90teU7J8E" />
+      </head>
       <GoogleOAuthProvider clientId={ process.env.OAUTH_CLIENT_ID || ""} >
         <body className={roboto_mono.className}>
           {children}
