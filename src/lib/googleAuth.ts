@@ -41,8 +41,7 @@ export const signUpGoogle = async (accessToken: string) => {
     if (data.error) {
       return {
         result: false,
-        message:
-          "Registration Failed, account already exist with the given email",
+        message: data.error,
       };
     }
     return { result: data.user, message: "Registration success" };
