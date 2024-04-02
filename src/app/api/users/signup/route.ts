@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       const email = googleResponse.data.email;
       const name = `${firstName} ${lastName}`;
 
-      const user = await db.user.findFirst({ where: { email } });
+      const user = await db.user.findUnique({ where: { email } });
       if (user)
         return NextResponse.json({ error: "User already exists", status: 400 });
 
