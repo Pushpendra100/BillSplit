@@ -1,26 +1,26 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-  //   async headers() {
-  //     return [
-  //       {
-  //         source: "/(.*)",
-  //         headers: [{ key: "Cross-Origin-Opener-Policy", value: "http://localhost:3000" }],
-  //       },
-  //     ];
-  //   },
-
   async headers() {
     return [
       {
-        source: "/(.*)",
+        source: "/api/(.*)",
         headers: [
+          { key: "Access-Control-Allow-Credentials", value: "true" },
           {
-            key: "Cross-Origin-Opener-Policy",
-            value: "same-origin-allow-popups", // "same-origin-allow-popups"
+            key: "Access-Control-Allow-Origin",
+            value: "same-origin-allow-popups",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, OPTIONS, POST, PUT, DELETE",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "X-Requested-With, Content-Type, Authorization",
           },
         ],
-      }
+      },
     ];
   },
 };
